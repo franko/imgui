@@ -1,0 +1,2 @@
+option('window', type : 'string', value : 'sdl2', description: 'window and event system library')
+option('graphics', type : 'string', value : 'opengl2', description: 'graphics library')
