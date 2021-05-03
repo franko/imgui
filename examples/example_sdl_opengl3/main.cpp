@@ -10,6 +10,10 @@
 #include <stdio.h>
 #include <SDL.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 // About Desktop OpenGL function loaders:
 //  Modern desktop OpenGL doesn't have a standard portable header file to load OpenGL function pointers.
 //  Helper libraries are often used for this purpose! Here we are supporting a few common ones (gl3w, glew, glad).
@@ -39,6 +43,11 @@ using namespace gl;
 // Main code
 int main(int, char**)
 {
+#ifdef _WIN32
+    HINSTANCE lib = LoadLibrary("user32.dll");
+    int (*SetProcessDPIAware)() = (int (*)()) GetProcAddress(lib, "SetProcessDPIAware");
+    SetProcessDPIAware();
+#endif
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a minority of Windows systems,
     // depending on whether SDL_INIT_GAMECONTROLLER is enabled or disabled.. updating to latest version of SDL is recommended!)
