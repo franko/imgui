@@ -1,0 +1,2 @@
+option('truetype', type : 'string', value : 'freetype', description: 'Library using to render truetype font (freetype/stb)')
+
