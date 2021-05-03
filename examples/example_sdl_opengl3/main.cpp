@@ -8,6 +8,11 @@
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
 #include <SDL.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
 #else
@@ -17,6 +22,11 @@
 // Main code
 int main(int, char**)
 {
+#ifdef _WIN32
+    HINSTANCE lib = LoadLibrary("user32.dll");
+    int (*SetProcessDPIAware)() = (int (*)()) GetProcAddress(lib, "SetProcessDPIAware");
+    SetProcessDPIAware();
+#endif
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a minority of Windows systems,
     // depending on whether SDL_INIT_GAMECONTROLLER is enabled or disabled.. updating to latest version of SDL is recommended!)
