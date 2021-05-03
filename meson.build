@@ -20,14 +20,14 @@ imgui_config_script = find_program('imgui-config.sh')
 imconfig_h = custom_target(
     'imconfig.h',
     output : 'imconfig.h',
-    command : [imgui_config_script, '@OUTPUT@', imgui_options],
+    command : [imgui_config_script, '@OUTPUT@', files('imconfig-sample.h'), imgui_options],
     install_dir : 'include',
     install : true,
 )
 
 # We hard-code the SDL2 + OpenGL3 backend but ImGui supports other
 # backends.
-imgui_src = ['imgui.cpp', 'imgui_draw.cpp', 'imgui_tables.cpp', 'imgui_widgets.cpp']
+imgui_src = ['misc/freetype/imgui_freetype.cpp', 'imgui.cpp', 'imgui_draw.cpp', 'imgui_tables.cpp', 'imgui_widgets.cpp']
 imgui_backend_src = ['backends/imgui_impl_sdl.cpp', 'backends/imgui_impl_opengl3.cpp']
 
 imgui_lib = static_library('imgui',
