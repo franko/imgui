@@ -32,8 +32,7 @@ imconfig_h = custom_target(
 )
 
 # We hard-code the SDL2 + OpenGL3 backend but ImGui supports other backends.
-imgui_src = [imconfig_h,
-    'imgui.cpp', 'imgui_draw.cpp', 'imgui_tables.cpp', 'imgui_widgets.cpp']
+imgui_src = ['imgui.cpp', 'imgui_draw.cpp', 'imgui_tables.cpp', 'imgui_widgets.cpp']
 imgui_backend_src = ['backends/imgui_impl_sdl.cpp', 'backends/imgui_impl_opengl3.cpp']
 
 if get_option('truetype') == 'freetype'
@@ -41,14 +40,14 @@ if get_option('truetype') == 'freetype'
 endif
 
 imgui_lib = static_library('imgui',
-    imgui_src + imgui_backend_src,
+    imgui_src + imgui_backend_src + [imconfig_h],
     include_directories: imgui_include,
     dependencies: imgui_deps,
     install: true
 )
 
 executable('imgui-demo',
-    ['imgui_demo.cpp', 'examples/example_sdl_opengl3/main.cpp'],
+    ['imgui_demo.cpp', 'examples/example_sdl_opengl3/main.cpp', imconfig_h],
     dependencies: imgui_deps,
     include_directories: imgui_include,
     link_with: imgui_lib,
