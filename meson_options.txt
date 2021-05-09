@@ -1,2 +1,3 @@
-option('truetype', type : 'string', value : 'freetype', description: 'Library using to render truetype font (freetype/stb)')
+option('truetype', type : 'string', value : 'freetype', description: 'Library using to render truetype font (freetype,stb)')
+option('renderer', type : 'string', value : 'opengl3', description: 'The renderer to be used (opengl2,opengl3)')
 
