@@ -40,6 +40,14 @@ using namespace gl;
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
+static void process_event(SDL_Event *event, bool& done, Uint32 window_id) {
+    ImGui_ImplSDL2_ProcessEvent(event);
+    if (event->type == SDL_QUIT)
+        done = true;
+    if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_CLOSE && event->window.windowID == window_id)
+        done = true;
+}
+
 // Main code
 int main(int, char**)
 {
@@ -145,6 +153,8 @@ int main(int, char**)
 
     // Main loop
     bool done = false;
+    int idle_frames = 0;
+    const int config_fps = -1000;
     while (!done)
     {
         // Poll and handle events (inputs, window resize, etc.)
@@ -153,14 +163,24 @@ int main(int, char**)
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT)
-                done = true;
-            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
-                done = true;
+        Uint32 window_id = SDL_GetWindowID(window);
+        if (idle_frames >= 5) {
+            if (SDL_WaitEventTimeout(&event, 1000 / config_fps)) {
+                process_event(&event, done, window_id);
+                while (SDL_PollEvent(&event))
+                {
+                    process_event(&event, done, window_id);
+                }
+                idle_frames = 0;
+            }
+        } else {
+            while (SDL_PollEvent(&event))
+            {
+                idle_frames = 0;
+                process_event(&event, done, window_id);
+            }
         }
+        idle_frames++;
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
