@@ -12,6 +12,8 @@
 // Call IMGUI_CHECKVERSION() from your .cpp files to verify that the data structures your files are using are matching the ones imgui.cpp is using.
 //-----------------------------------------------------------------------------
 
+#include <stdint.h>
+
 #pragma once
 
 //---- Define assertion handler. Defaults to calling assert().
@@ -93,7 +95,9 @@
 // Your renderer backend will need to support it (most example renderer backends support both 16/32-bit indices).
 // Another way to allow large meshes while keeping 16-bit indices is to handle ImDrawCmd::VtxOffset in your renderer.
 // Read about ImGuiBackendFlags_RendererHasVtxOffset for details.
-//#define ImDrawIdx unsigned int
+#ifdef IMGUI_DRAWIDX_SIZE_32
+#define ImDrawIdx uint32_t
+#endif
 
 //---- Override ImDrawCallback signature (will need to modify renderer backends accordingly)
 //struct ImDrawList;

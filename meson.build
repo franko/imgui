@@ -11,6 +11,9 @@ imgui_window   = get_option('window')
 imgui_include = include_directories('backends')
 
 imgui_options = ['IMGUI_IMPL_OPENGL_LOADER_GLEW']
+if get_option('largeidx')
+    imgui_options += 'IMGUI_DRAWIDX_SIZE_32'
+endif
 
 imgui_config_script = find_program('imgui-config.sh')
 
