@@ -10,7 +10,7 @@ imgui_window   = get_option('window')
 
 imgui_include = include_directories('backends')
 
-imgui_options = ['IMGUI_IMPL_OPENGL_LOADER_GLEW']
+imgui_options = ['IMGUI_IMPL_OPENGL_LOADER_GLEW', 'IMGUI_DISABLE_OBSOLETE_FUNCTIONS']
 if get_option('largeidx')
     imgui_options += 'IMGUI_DRAWIDX_SIZE_32'
 endif
