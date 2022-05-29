@@ -116,6 +116,10 @@ install_headers(
     'backends' / (imgui_ren_impl + '.h'),
 )
 
+if imgui_truetype == 'freetype'
+    install_headers('misc/freetype/imgui_freetype.h')
+endif
+
 pkg = import('pkgconfig')
 
 pkg.generate(imgui_lib,
