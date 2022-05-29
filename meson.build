@@ -4,9 +4,7 @@ cc = meson.get_compiler('cpp')
 libm = cc.find_library('m', required : false)
 libdl = cc.find_library('dl', required : false)
 
-imgui_renderer = get_option('renderer')
 imgui_truetype = get_option('truetype')
-imgui_window   = get_option('window')
 
 imgui_include = include_directories('backends')
 
@@ -15,55 +13,23 @@ if get_option('largeidx')
     imgui_options += 'IMGUI_DRAWIDX_SIZE_32'
 endif
 
-imgui_config_script = find_program('imgui-config.sh')
+# imgui_window_backends = {
+#     'sdl':   {'example': 'sdl',   'require': ['sdl2'],  'source_ext': '.cpp'},
+#     'glfw':  {'example': 'glfw',  'require': ['glfw3'], 'source_ext': '.cpp'},
+#     'win32': {'example': 'win32', 'require': [],        'source_ext': '.cpp'},
+#     'osx':   {'example': 'apple', 'require': [],        'source_ext': '.mm'},
+# }
 
-imconfig_h = custom_target(
-    'imconfig.h',
-    output : 'imconfig.h',
-    command : [imgui_config_script, '@OUTPUT@', files('imconfig-sample.h'), imgui_options],
-    install_dir : 'include',
-    install : true,
-)
-
-imgui_window_backends = {
-    'sdl':   {'example': 'sdl',   'require': ['sdl2'],  'source_ext': '.cpp'},
-    'glfw':  {'example': 'glfw',  'require': ['glfw3'], 'source_ext': '.cpp'},
-    'win32': {'example': 'win32', 'require': [],        'source_ext': '.cpp'},
-    'osx':   {'example': 'apple', 'require': [],        'source_ext': '.mm'},
-}
-
-imgui_render_backends = {
-    'opengl2': {'example': 'opengl2',   'require': ['gl'], 'source_ext': '.cpp'},
-    'opengl3': {'example': 'opengl3',   'require': ['gl'], 'source_ext': '.cpp'},
-    'dx9':     {'example': 'directx9',  'require': [],     'source_ext': '.cpp'},
-    'dx10':    {'example': 'directx10', 'require': [],     'source_ext': '.cpp'},
-    'dx11':    {'example': 'directx11', 'require': [],     'source_ext': '.cpp'},
-    'dx12':    {'example': 'directx12', 'require': [],     'source_ext': '.cpp'},
-    'vulkan':  {'example': 'vulkan',    'require': ['vulkan'], 'source_ext': '.cpp' },
-    'metal':   {'example': 'metal',     'require': [],     'source_ext': '.mm' },
-}
-
-if imgui_window not in imgui_window_backends
-    error('unknown window subsystem type: ' + imgui_window)
-endif
-
-if imgui_renderer not in imgui_render_backends
-    error('unknown renderer type: ' + imgui_renderer)
-endif
-
-imgui_win_impl = 'imgui_impl_' + imgui_window
-imgui_ren_impl = 'imgui_impl_' + imgui_renderer
-imgui_win_ext = imgui_window_backends[imgui_window]['source_ext']
-imgui_ren_ext = imgui_render_backends[imgui_renderer]['source_ext']
-
-imgui_src = ['imgui.cpp', 'imgui_draw.cpp', 'imgui_tables.cpp', 'imgui_widgets.cpp']
-if imgui_window in imgui_window_backends
-    imgui_window_src = ['backends' / (imgui_win_impl + imgui_win_ext)]
-endif
-
-if imgui_renderer in imgui_render_backends
-    imgui_render_src = ['backends' / (imgui_ren_impl + imgui_ren_ext)]
-endif
+# imgui_render_backends = {
+#     'opengl2': {'example': 'opengl2',   'require': ['gl'], 'source_ext': '.cpp'},
+#     'opengl3': {'example': 'opengl3',   'require': ['gl'], 'source_ext': '.cpp'},
+#     'dx9':     {'example': 'directx9',  'require': [],     'source_ext': '.cpp'},
+#     'dx10':    {'example': 'directx10', 'require': [],     'source_ext': '.cpp'},
+#     'dx11':    {'example': 'directx11', 'require': [],     'source_ext': '.cpp'},
+#     'dx12':    {'example': 'directx12', 'require': [],     'source_ext': '.cpp'},
+#     'vulkan':  {'example': 'vulkan',    'require': ['vulkan'], 'source_ext': '.cpp' },
+#     'metal':   {'example': 'metal',     'require': [],     'source_ext': '.mm' },
+# }
 
 glew_dep = dependency('glew')
 
@@ -78,42 +44,66 @@ else
     error('unknown truetype option: ' + imgui_truetype)
 endif
 
-foreach dep : imgui_window_backends[imgui_window]['require']
-    imgui_deps += dependency(dep, method : dep == 'sdl2' ? 'config-tool' : 'auto')
-endforeach
+imgui_config_script = find_program('imgui-config.sh')
 
-foreach dep : imgui_render_backends[imgui_renderer]['require']
-    imgui_deps += dependency(dep)
-endforeach
+imconfig_h = custom_target(
+    'imconfig.h',
+    output : 'imconfig.h',
+    command : [imgui_config_script, '@OUTPUT@', files('imconfig-sample.h'), imgui_options],
+    install_dir : 'include',
+    install : true,
+)
+
+imgui_src = ['imgui.cpp', 'imgui_draw.cpp', 'imgui_tables.cpp', 'imgui_widgets.cpp']
 
 if imgui_truetype == 'freetype'
     imgui_src += 'misc/freetype/imgui_freetype.cpp'
 endif
 
-imgui_lib = static_library('imgui',
-    imgui_src + imgui_window_src + imgui_render_src + [imconfig_h],
+imgui_lib = library('imgui',
+    imgui_src + [imconfig_h],
     include_directories: imgui_include,
     dependencies: imgui_deps,
     install: true
 )
 
-imgui_example_name = 'example_' + imgui_window_backends[imgui_window]['example'] + '_' + imgui_render_backends[imgui_renderer]['example']
-imgui_example_src = 'examples' / imgui_example_name / ('main' + imgui_win_ext)
+if get_option('sdl')
+    imgui_sdl_deps = [ dependency('sdl2', method : 'config-tool') ]
+    imgui_sdl_lib = library('imguisdl', 'backends/imgui_impl_sdl.cpp',
+        dependencies : imgui_sdl_deps,
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_sdl.h')
+endif
 
-executable('imgui-demo',
-    ['imgui_demo.cpp', imgui_example_src, imconfig_h],
-    dependencies: imgui_deps,
-    include_directories: imgui_include,
-    link_with: imgui_lib,
-    install: true,
-)
+
+if get_option('opengl3')
+    imgui_opengl3_deps = [ dependency('gl') ]
+    imgui_opengl3_lib = library('imguiopengl3',
+        'backends/imgui_impl_opengl3.cpp',
+        dependencies : imgui_opengl3_deps,
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_opengl3.h')
+endif
+
+
+if get_option('sdl') and get_option('opengl3')
+    executable('imgui-demo',
+        ['imgui_demo.cpp', 'examples/example_sdl_opengl3/main.cpp', imconfig_h],
+        dependencies: imgui_deps + imgui_sdl_deps + imgui_opengl3_deps,
+        include_directories: imgui_include,
+        link_with: [imgui_lib, imgui_sdl_lib, imgui_opengl3_lib],
+        install: true,
+    )
+endif
 
 install_headers(
     'imgui.h',
     'imgui_internal.h',
     'imstb_textedit.h',
-    'backends' / (imgui_win_impl + '.h'),
-    'backends' / (imgui_ren_impl + '.h'),
 )
 
 if imgui_truetype == 'freetype'
@@ -129,4 +119,24 @@ pkg.generate(imgui_lib,
     description : 'Dear ImGui library',
     url : 'http://github.com/ocornut/imgui',
 )
+
+if get_option('sdl')
+    pkg.generate(imgui_sdl_lib,
+        filebase : 'imguisdl',
+        name : 'imguisdl',
+        libraries : [imgui_lib, imgui_sdl_lib],
+        description : 'Dear ImGui library SDL2 support',
+        url : 'http://github.com/ocornut/imgui',
+    )
+endif
+
+if get_option('opengl3')
+    pkg.generate(imgui_opengl3_lib,
+        filebase : 'imguiopengl3',
+        name : 'imguiopengl3',
+        libraries : [imgui_lib, imgui_opengl3_lib],
+        description : 'Dear ImGui library OpenGL3 support',
+        url : 'http://github.com/ocornut/imgui',
+    )
+endif
 
