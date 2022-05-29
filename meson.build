@@ -77,6 +77,31 @@ if get_option('sdl')
     install_headers('backends/imgui_impl_sdl.h')
 endif
 
+if get_option('glfw')
+    imgui_glfw_deps = [ dependency('glfw3') ]
+    imgui_glfw_lib = library('imguiglfw', 'backends/imgui_impl_glfw.cpp',
+        dependencies : imgui_glfw_deps,
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_glfw.h')
+endif
+
+if get_option('win32')
+    imgui_win32_lib = library('imguiwin32', 'backends/imgui_impl_win32.cpp',
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_win32.h')
+endif
+
+if get_option('osx')
+    imgui_osx_lib = library('imguiosx', 'backends/imgui_impl_osx.mm',
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_osx.h')
+endif
 
 if get_option('opengl3')
     imgui_opengl3_deps = [ dependency('gl') ]
@@ -89,6 +114,72 @@ if get_option('opengl3')
     install_headers('backends/imgui_impl_opengl3.h')
 endif
 
+if get_option('opengl2')
+    imgui_opengl2_deps = [ dependency('gl') ]
+    imgui_opengl2_lib = library('imguiopengl2',
+        'backends/imgui_impl_opengl2.cpp',
+        dependencies : imgui_opengl2_deps,
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_opengl2.h')
+endif
+
+if get_option('vulkan')
+    imgui_vulkan_deps = [ dependency('vulkan') ]
+    imgui_vulkan_lib = library('imguivulkan',
+        'backends/imgui_impl_vulkan.cpp',
+        dependencies : imgui_vulkan_deps,
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_vulkan.h')
+endif
+
+if get_option('dx9')
+    imgui_dx9_lib = library('imguidx9',
+        'backends/imgui_impl_dx9.cpp',
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_dx9.h')
+endif
+
+if get_option('dx10')
+    imgui_dx10_lib = library('imguidx10',
+        'backends/imgui_impl_dx10.cpp',
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_dx10.h')
+endif
+
+if get_option('dx11')
+    imgui_dx11_lib = library('imguidx11',
+        'backends/imgui_impl_dx11.cpp',
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_dx11.h')
+endif
+
+if get_option('dx12')
+    imgui_dx12_lib = library('imguidx12',
+        'backends/imgui_impl_dx12.cpp',
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_dx12.h')
+endif
+
+if get_option('metal')
+    imgui_metal_lib = library('imguimetal',
+        'backends/imgui_impl_metal.mm',
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_metal.h')
+endif
 
 if get_option('sdl') and get_option('opengl3')
     executable('imgui-demo',

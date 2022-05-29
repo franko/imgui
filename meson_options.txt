@@ -1,5 +1,18 @@
 option('truetype', type : 'string', value : 'freetype', description: 'Library using to render truetype font (freetype,stb)')
-option('sdl', type : 'boolean', value : true,  description: 'Build the window/events support using SDL2')
-option('opengl3', type : 'boolean', value : true,  description: 'Build the 3D API support using OpenGL3')
+
+option('sdl',   type : 'boolean', value : false,  description: 'Build the window/events support using SDL2')
+option('glfw',  type : 'boolean', value : false,  description: 'Build the window/events support using GLFW')
+option('win32', type : 'boolean', value : false,  description: 'Build the window/events support using Win32')
+option('osx',   type : 'boolean', value : false,  description: 'Build the window/events support using MacOS')
+
+option('opengl2', type : 'boolean', value : false,  description: 'Build the 3D API support using OpenGL2')
+option('opengl3', type : 'boolean', value : false,  description: 'Build the 3D API support using OpenGL3')
+option('vulkan',  type : 'boolean', value : false,  description: 'Build the 3D API support using Vulkan')
+option('dx9',     type : 'boolean', value : false,  description: 'Build the 3D API support using DirectX9')
+option('dx10',    type : 'boolean', value : false,  description: 'Build the 3D API support using DirectX10')
+option('dx11',    type : 'boolean', value : false,  description: 'Build the 3D API support using DirectX11')
+option('dx12',    type : 'boolean', value : false,  description: 'Build the 3D API support using DirectX12')
+option('metal',   type : 'boolean', value : false,  description: 'Build the 3D API support using Metal')
+
 option('largeidx', type : 'boolean', value : false,     description: 'Use 32-bit wide for drawing indices')
 
