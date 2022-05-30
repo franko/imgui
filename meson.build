@@ -47,6 +47,14 @@ imgui_lib = library('imgui',
     install: true
 )
 
+imgui_demo_lib = library('imguidemo',
+    ['imgui_demo.cpp', imconfig_h],
+    include_directories: imgui_include,
+    link_with : imgui_lib,
+    dependencies: imgui_deps,
+    install: true
+)
+
 pkg = import('pkgconfig')
 
 pkg.generate(imgui_lib,
@@ -54,6 +62,14 @@ pkg.generate(imgui_lib,
     name : 'imgui',
     libraries : imgui_lib,
     description : 'Dear ImGui library',
+    url : 'http://github.com/ocornut/imgui',
+)
+
+pkg.generate(imgui_demo_lib,
+    filebase : 'imguidemo',
+    name : 'imguidemo',
+    libraries : [imgui_lib, imgui_demo_lib],
+    description : 'Dear ImGui library Demo',
     url : 'http://github.com/ocornut/imgui',
 )
 
@@ -272,19 +288,19 @@ endif
 if get_option('sdl')
     if get_option('opengl3')
         executable('imgui-demo-sdl-opengl3',
-            ['imgui_demo.cpp', 'examples/example_sdl_opengl3/main.cpp', imconfig_h],
+            ['examples/example_sdl_opengl3/main.cpp', imconfig_h],
             dependencies: imgui_deps + imgui_sdl_deps + imgui_opengl3_deps,
             include_directories: imgui_include,
-            link_with: [imgui_lib, imgui_sdl_lib, imgui_opengl3_lib],
+            link_with: [imgui_lib, imgui_demo_lib, imgui_sdl_lib, imgui_opengl3_lib],
             install: true,
         )
     endif
     if get_option('d3d11')
         executable('imgui-demo-sdl-dx11',
-            ['imgui_demo.cpp', 'examples/example_sdl_directx11/main.cpp', imconfig_h],
+            ['examples/example_sdl_directx11/main.cpp', imconfig_h],
             dependencies: imgui_deps + imgui_sdl_deps,
             include_directories: imgui_include,
-            link_with: [imgui_lib, imgui_sdl_lib, imgui_dx11_lib],
+            link_with: [imgui_lib, imgui_demo_lib, imgui_sdl_lib, imgui_dx11_lib],
             install: true,
         )
     endif
@@ -292,10 +308,10 @@ endif
 if get_option('glfw')
     if get_option('opengl3')
         executable('imgui-demo-glfw-opengl3',
-            ['imgui_demo.cpp', 'examples/example_glfw_opengl3/main.cpp', imconfig_h],
+            ['examples/example_glfw_opengl3/main.cpp', imconfig_h],
             dependencies: imgui_deps + imgui_glfw_deps + imgui_opengl3_deps,
             include_directories: imgui_include,
-            link_with: [imgui_lib, imgui_glfw_lib, imgui_opengl3_lib],
+            link_with: [imgui_lib, imgui_demo_lib, imgui_glfw_lib, imgui_opengl3_lib],
             install: true,
         )
     endif
@@ -303,10 +319,10 @@ endif
 if get_option('win32')
     if get_option('d3d11')
         executable('imgui-demo-win32-dx11',
-            ['imgui_demo.cpp', 'examples/example_win32_directx11/main.cpp', imconfig_h],
+            ['examples/example_win32_directx11/main.cpp', imconfig_h],
             dependencies: imgui_deps + imgui_win32_deps + imgui_dx11_deps,
             include_directories: imgui_include,
-            link_with: [imgui_lib, imgui_win32_lib, imgui_dx11_lib],
+            link_with: [imgui_lib, imgui_demo_lib, imgui_win32_lib, imgui_dx11_lib],
             install: true,
         )
     endif
