@@ -13,24 +13,6 @@ if get_option('largeidx')
     imgui_options += 'IMGUI_DRAWIDX_SIZE_32'
 endif
 
-# imgui_window_backends = {
-#     'sdl':   {'example': 'sdl',   'require': ['sdl2'],  'source_ext': '.cpp'},
-#     'glfw':  {'example': 'glfw',  'require': ['glfw3'], 'source_ext': '.cpp'},
-#     'win32': {'example': 'win32', 'require': [],        'source_ext': '.cpp'},
-#     'osx':   {'example': 'apple', 'require': [],        'source_ext': '.mm'},
-# }
-
-# imgui_render_backends = {
-#     'opengl2': {'example': 'opengl2',   'require': ['gl'], 'source_ext': '.cpp'},
-#     'opengl3': {'example': 'opengl3',   'require': ['gl'], 'source_ext': '.cpp'},
-#     'dx9':     {'example': 'directx9',  'require': [],     'source_ext': '.cpp'},
-#     'dx10':    {'example': 'directx10', 'require': [],     'source_ext': '.cpp'},
-#     'dx11':    {'example': 'directx11', 'require': [],     'source_ext': '.cpp'},
-#     'dx12':    {'example': 'directx12', 'require': [],     'source_ext': '.cpp'},
-#     'vulkan':  {'example': 'vulkan',    'require': ['vulkan'], 'source_ext': '.cpp' },
-#     'metal':   {'example': 'metal',     'require': [],     'source_ext': '.mm' },
-# }
-
 imgui_deps = [libm, libdl]
 if imgui_truetype == 'freetype'
     freetype_dep = dependency('freetype2')
@@ -198,7 +180,7 @@ if get_option('vulkan')
     )
 endif
 
-if get_option('dx9')
+if get_option('d3d9')
     dx9_dep = cc.find_library('d3d9')
     imgui_dx9_lib = library('imguidx9', ['backends/imgui_impl_dx9.cpp', imconfig_h],
         dependencies : dx9_dep,
@@ -216,7 +198,7 @@ if get_option('dx9')
     )
 endif
 
-if get_option('dx10')
+if get_option('d3d10')
     dx10_deps = [ cc.find_library('d3d10'), cc.find_library('d3dcompiler'), cc.find_library('dxgi') ]
     imgui_dx10_lib = library('imguidx10', ['backends/imgui_impl_dx10.cpp', imconfig_h],
         dependencies : dx10_deps,
@@ -234,7 +216,7 @@ if get_option('dx10')
     )
 endif
 
-if get_option('dx11')
+if get_option('d3d11')
     dx11_deps = [ cc.find_library('d3d11'), cc.find_library('d3dcompiler'), cc.find_library('dxgi') ]
     imgui_dx11_lib = library('imguidx11', ['backends/imgui_impl_dx11.cpp', imconfig_h],
         dependencies : dx11_deps,
@@ -252,7 +234,7 @@ if get_option('dx11')
     )
 endif
 
-if get_option('dx12')
+if get_option('d3d12')
     dx12_deps = [ cc.find_library('d3d12'), cc.find_library('d3dcompiler'), cc.find_library('dxgi') ]
     imgui_dx12_lib = library('imguidx12', ['backends/imgui_impl_dx12.cpp', imconfig_h],
         dependencies : dx12_deps,
@@ -296,7 +278,7 @@ if get_option('sdl')
             install: true,
         )
     endif
-    if get_option('dx11')
+    if get_option('d3d11')
         executable('imgui-demo-dx11',
             ['imgui_demo.cpp', 'examples/example_sdl_directx11/main.cpp', imconfig_h],
             dependencies: imgui_deps + imgui_sdl_deps,
