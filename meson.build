@@ -13,6 +13,12 @@ if get_option('largeidx')
     imgui_options += 'IMGUI_DRAWIDX_SIZE_32'
 endif
 
+if get_option('cimpl')
+    # This option is used to build the library for cimgui
+    # for MSVC it should be defined as extern "C"  __declspec(dllexport)
+    imgui_options += 'IMGUI_IMPL_API extern "C"'
+endif
+
 imgui_deps = [libm, libdl]
 if imgui_truetype == 'freetype'
     freetype_dep = dependency('freetype2')
