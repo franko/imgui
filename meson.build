@@ -13,10 +13,19 @@ if get_option('largeidx')
     imgui_options += 'IMGUI_DRAWIDX_SIZE_32'
 endif
 
+imgui_cpp_args = []
 if get_option('cimpl')
     # This option is used to build the library for cimgui
     # for MSVC it should be defined as extern "C"  __declspec(dllexport)
     imgui_options += 'IMGUI_IMPL_API extern "C"'
+    if cc.get_id() in ['clang', 'gcc']
+        # If the following option is not given we will have some references
+        # to functions like __cxa_guard_acquire. These functions are provided
+        # by the supc++ library for gcc but this is not part of the C standard
+        # libraries.
+        # https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Dialect-Options.html
+        imgui_cpp_args += '-fno-threadsafe-statics'
+    endif
 endif
 
 imgui_deps = [libm, libdl]
@@ -48,6 +57,7 @@ endif
 
 imgui_lib = library('imgui',
     imgui_src + [imconfig_h],
+    cpp_args : imgui_cpp_args,
     include_directories: imgui_include,
     dependencies: imgui_deps,
     install: true
@@ -56,6 +66,7 @@ imgui_lib = library('imgui',
 imgui_demo_lib = library('imguidemo',
     ['imgui_demo.cpp', imconfig_h],
     include_directories: imgui_include,
+    cpp_args : imgui_cpp_args,
     link_with : imgui_lib,
     dependencies: imgui_deps,
     install: true
@@ -83,6 +94,7 @@ if get_option('sdl')
     imgui_sdl_deps = [ dependency('sdl2', method : 'config-tool') ]
     imgui_sdl_lib = library('imguisdl', ['backends/imgui_impl_sdl.cpp', imconfig_h],
         dependencies : imgui_sdl_deps,
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
@@ -101,6 +113,7 @@ if get_option('glfw')
     imgui_glfw_deps = [ dependency('glfw3') ]
     imgui_glfw_lib = library('imguiglfw', ['backends/imgui_impl_glfw.cpp', imconfig_h],
         dependencies : imgui_glfw_deps,
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
@@ -118,6 +131,7 @@ endif
 if get_option('win32')
     imgui_win32_deps = [ cc.find_library('gdi32'), cc.find_library('dwmapi') ]
     imgui_win32_lib = library('imguiwin32', ['backends/imgui_impl_win32.cpp', imconfig_h],
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
@@ -153,6 +167,7 @@ if get_option('opengl2')
     imgui_opengl2_deps = [ dependency('gl') ]
     imgui_opengl2_lib = library('imguiopengl2', ['backends/imgui_impl_opengl2.cpp', imconfig_h],
         dependencies : imgui_opengl2_deps,
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
@@ -171,6 +186,7 @@ if get_option('opengl3')
     imgui_opengl3_deps = [ dependency('gl') ]
     imgui_opengl3_lib = library('imguiopengl3', ['backends/imgui_impl_opengl3.cpp', imconfig_h],
         dependencies : imgui_opengl3_deps,
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
@@ -189,6 +205,7 @@ if get_option('vulkan')
     imgui_vulkan_deps = [ dependency('vulkan') ]
     imgui_vulkan_lib = library('imguivulkan', ['backends/imgui_impl_vulkan.cpp', imconfig_h],
         dependencies : imgui_vulkan_deps,
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
@@ -207,6 +224,7 @@ if get_option('d3d9')
     dx9_dep = cc.find_library('d3d9')
     imgui_dx9_lib = library('imguidx9', ['backends/imgui_impl_dx9.cpp', imconfig_h],
         dependencies : dx9_dep,
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
@@ -225,6 +243,7 @@ if get_option('d3d10')
     imgui_dx10_deps = [ cc.find_library('d3d10'), cc.find_library('d3dcompiler'), cc.find_library('dxgi') ]
     imgui_dx10_lib = library('imguidx10', ['backends/imgui_impl_dx10.cpp', imconfig_h],
         dependencies : imgui_dx10_deps,
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
@@ -243,6 +262,7 @@ if get_option('d3d11')
     imgui_dx11_deps = [ cc.find_library('d3d11'), cc.find_library('d3dcompiler'), cc.find_library('dxgi') ]
     imgui_dx11_lib = library('imguidx11', ['backends/imgui_impl_dx11.cpp', imconfig_h],
         dependencies : imgui_dx11_deps,
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
@@ -261,6 +281,7 @@ if get_option('d3d12')
     imgui_dx12_deps = [ cc.find_library('d3d12'), cc.find_library('d3dcompiler'), cc.find_library('dxgi') ]
     imgui_dx12_lib = library('imguidx12', ['backends/imgui_impl_dx12.cpp', imconfig_h],
         dependencies : imgui_dx12_deps,
+        cpp_args : imgui_cpp_args,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
