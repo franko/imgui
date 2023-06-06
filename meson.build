@@ -8,37 +8,33 @@ imgui_truetype = get_option('truetype')
 
 imgui_include = include_directories('backends')
 
-imgui_options = ['IMGUI_DISABLE_OBSOLETE_FUNCTIONS']
+imgui_conf_data = configuration_data()
+
+imgui_conf_data.set('IMGUI_DISABLE_OBSOLETE_FUNCTIONS', true)
 if get_option('largeidx')
-    imgui_options += 'IMGUI_DRAWIDX_SIZE_32'
+    imgui_conf_data.set('IMGUI_DRAWIDX_SIZE_32', true)
 endif
 
 if get_option('cimpl')
     # This option is used to build the library for cimgui
     # for MSVC it should be defined as extern "C"  __declspec(dllexport)
-    imgui_options += 'IMGUI_IMPL_API extern "C"'
+    imgui_conf_data.set('IMGUI_IMPL_API', 'extern "C"')
+else
+    imgui_conf_data.set('IMGUI_IMPL_API', '')
 endif
 
 imgui_deps = [libm, libdl]
 if imgui_truetype == 'freetype'
     freetype_dep = dependency('freetype2')
-    imgui_options += 'IMGUI_ENABLE_FREETYPE'
+    imgui_conf_data.set('IMGUI_ENABLE_FREETYPE', true)
     imgui_deps += freetype_dep
 elif imgui_truetype == 'stb'
-    imgui_options += 'IMGUI_ENABLE_STB_TRUETYPE'
+    imgui_conf_data.set('IMGUI_ENABLE_STB_TRUETYPE', true)
 else
     error('unknown truetype option: ' + imgui_truetype)
 endif
 
-imgui_config_script = find_program('imgui-config.sh')
-
-imconfig_h = custom_target(
-    'imconfig.h',
-    output : 'imconfig.h',
-    command : [imgui_config_script, '@OUTPUT@', files('imconfig-sample.h'), imgui_options],
-    install_dir : 'include',
-    install : true,
-)
+imconfig_h = configure_file(input : 'imconfig.h.in', output : 'imconfig.h', configuration : imgui_conf_data)
 
 imgui_src = ['imgui.cpp', 'imgui_draw.cpp', 'imgui_tables.cpp', 'imgui_widgets.cpp']
 

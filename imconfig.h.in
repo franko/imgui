@@ -1,0 +1,14 @@
+#include <stdint.h>
+
+#pragma once
+
+#ifdef IMGUI_DRAWIDX_SIZE_32
+#define ImDrawIdx uint32_t
+#endif
+
+#define IMGUI_IMPL_API @IMGUI_IMPL_API@
+#mesondefine IMGUI_ENABLE_STB_TRUETYPE
+#mesondefine IMGUI_ENABLE_FREETYPE
+#mesondefine IMGUI_DISABLE_OBSOLETE_FUNCTIONS
+#mesondefine IMGUI_DRAWIDX_SIZE_32
+
