@@ -34,7 +34,7 @@ else
     error('unknown truetype option: ' + imgui_truetype)
 endif
 
-imconfig_h = configure_file(input : 'imconfig.h.in', output : 'imconfig.h', configuration : imgui_conf_data)
+imconfig_h = configure_file(input : 'imconfig.h.in', output : 'imconfig.h', configuration : imgui_conf_data, install : true, install_dir : get_option('includedir'))
 
 imgui_src = ['imgui.cpp', 'imgui_draw.cpp', 'imgui_tables.cpp', 'imgui_widgets.cpp']
 
