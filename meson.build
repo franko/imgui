@@ -76,14 +76,16 @@ pkg.generate(imgui_demo_lib,
 )
 
 if get_option('sdl')
+    # With imgui 1.89.6 we have also sdl3 and sdl2/3 renderer for the implementation.
+    # We may addo support for this variants but for the moments we only do sdl2.
     imgui_sdl_deps = [ dependency('sdl2', method : 'config-tool') ]
-    imgui_sdl_lib = library('imguisdl', ['backends/imgui_impl_sdl.cpp', imconfig_h],
+    imgui_sdl_lib = library('imguisdl', ['backends/imgui_impl_sdl2.cpp', imconfig_h],
         dependencies : imgui_sdl_deps,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
     )
-    install_headers('backends/imgui_impl_sdl.h')
+    install_headers('backends/imgui_impl_sdl2.h')
     pkg.generate(imgui_sdl_lib,
         filebase : 'imguisdl',
         name : 'imguisdl',
@@ -289,8 +291,8 @@ endif
 
 if get_option('sdl')
     if get_option('opengl3')
-        executable('imgui-demo-sdl-opengl3',
-            ['examples/example_sdl_opengl3/main.cpp', imconfig_h],
+        executable('imgui-demo-sdls-opengl3',
+            ['examples/example_sdl2_opengl3/main.cpp', imconfig_h],
             dependencies: imgui_deps + imgui_sdl_deps + imgui_opengl3_deps,
             include_directories: imgui_include,
             link_with: [imgui_lib, imgui_demo_lib, imgui_sdl_lib, imgui_opengl3_lib],
@@ -298,8 +300,8 @@ if get_option('sdl')
         )
     endif
     if get_option('d3d11')
-        executable('imgui-demo-sdl-dx11',
-            ['examples/example_sdl_directx11/main.cpp', imconfig_h],
+        executable('imgui-demo-sdl2-dx11',
+            ['examples/example_sdl2_directx11/main.cpp', imconfig_h],
             dependencies: imgui_deps + imgui_sdl_deps,
             include_directories: imgui_include,
             link_with: [imgui_lib, imgui_demo_lib, imgui_sdl_lib, imgui_dx11_lib],
