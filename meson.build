@@ -1,4 +1,8 @@
-project('imgui', 'cpp', default_options : ['cpp_winlibs='])
+project('imgui', 'cpp', default_options : ['cpp_winlibs=', 'cpp_std=c++17'])
+
+if host_machine.system() == 'darwin'
+    add_languages('objcpp')
+endif
 
 cc = meson.get_compiler('cpp')
 libm = cc.find_library('m', required : false)
@@ -289,9 +293,25 @@ if get_option('metal')
     )
 endif
 
+if get_option('osx')
+    if get_option('metal')
+        # Af of 1.89.6 the following compiles but doesn't work, the window
+        # never shows up.
+        executable('imgui-demo-macos-metal',
+            ['examples/example_apple_metal/main.mm', imconfig_h],
+            dependencies: imgui_deps,
+            include_directories: imgui_include,
+            link_with: [imgui_lib, imgui_demo_lib, imgui_osx_lib, imgui_metal_lib],
+            link_args : ['-framework', 'GameController', '-framework', 'AppKit', '-framework', 'MetalKit', '-framework', 'Foundation', '-framework', 'Metal'],
+            objcpp_args : ['-DTARGET_OS_OSX'],
+            install: true,
+        )
+    endif
+endif
+
 if get_option('sdl')
     if get_option('opengl3')
-        executable('imgui-demo-sdls-opengl3',
+        executable('imgui-demo-sdl2-opengl3',
             ['examples/example_sdl2_opengl3/main.cpp', imconfig_h],
             dependencies: imgui_deps + imgui_sdl_deps + imgui_opengl3_deps,
             include_directories: imgui_include,
