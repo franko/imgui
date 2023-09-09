@@ -120,6 +120,7 @@ endif
 if get_option('win32')
     imgui_win32_deps = [ cc.find_library('gdi32'), cc.find_library('dwmapi') ]
     imgui_win32_lib = library('imguiwin32', ['backends/imgui_impl_win32.cpp', imconfig_h],
+        dependencies : imgui_win32_deps,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
