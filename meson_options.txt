@@ -1,4 +1,4 @@
-option('truetype', type : 'string', value : 'freetype', description: 'Library using to render truetype font (freetype,stb)')
+option('truetype', type : 'string',  value : 'freetype', description: 'Library using to render truetype font (freetype,stb)')
 
 option('sdl',   type : 'boolean', value : false,  description: 'Build the window/events support using SDL2')
 option('glfw',  type : 'boolean', value : false,  description: 'Build the window/events support using GLFW')
@@ -16,4 +16,5 @@ option('metal',   type : 'boolean', value : false,  description: 'Build the 3D A
 
 option('largeidx', type : 'boolean', value : false, description: 'Use 32-bit wide for drawing indices')
 option('cimpl',    type : 'boolean', value : false, description: 'Define impl functions as extern "C"')
+option('stdlib',   type : 'boolean', value : false, description: 'Add supprt for using C++ strings')
 

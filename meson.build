@@ -363,3 +363,19 @@ if imgui_truetype == 'freetype'
     install_headers('misc/freetype/imgui_freetype.h')
 endif
 
+if get_option('stdlib')
+    imgui_stdlib_include = include_directories('misc/cpp')
+    imgui_stdlib_lib = library('imguistdlib', 'misc/cpp/imgui_stdlib.cpp',
+        include_directories: [imgui_include, imgui_stdlib_include],
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('misc/cpp/imgui_stdlib.h')
+    pkg.generate(imgui_stdlib_lib,
+        filebase : 'imguistdlib',
+        name : 'imguistdlib',
+        libraries : [imgui_lib, imgui_stdlib_lib],
+        description : 'Dear ImGui library C++ stdlib support',
+        url : 'http://github.com/ocornut/imgui',
+    )
+endif
