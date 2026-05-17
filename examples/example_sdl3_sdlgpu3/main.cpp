@@ -28,7 +28,11 @@ int main(int, char**)
 {
     // Setup SDL
     // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]
+#ifdef IMGUI_DEMO_GAMEPAD
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
+#else
+    if (!SDL_Init(SDL_INIT_VIDEO))
+#endif
     {
         printf("Error: SDL_Init(): %s\n", SDL_GetError());
         return 1;
@@ -67,7 +71,9 @@ int main(int, char**)
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+#ifdef IMGUI_DEMO_GAMEPAD
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+#endif
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -80,6 +86,9 @@ int main(int, char**)
 
     // Setup Platform/Renderer backends
     ImGui_ImplSDL3_InitForSDLGPU(window);
+#ifndef IMGUI_DEMO_GAMEPAD
+    ImGui_ImplSDL3_SetGamepadMode(ImGui_ImplSDL3_GamepadMode_Manual, nullptr, 0);
+#endif
     ImGui_ImplSDLGPU3_InitInfo init_info = {};
     init_info.Device = gpu_device;
     init_info.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpu_device, window);

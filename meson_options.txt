@@ -18,4 +18,5 @@ option('metal',   type : 'boolean', value : false,  description: 'Build the 3D A
 option('largeidx', type : 'boolean', value : false, description: 'Use 32-bit wide for drawing indices')
 option('cimpl',    type : 'boolean', value : false, description: 'Define impl functions as extern "C"')
 option('stdlib',   type : 'boolean', value : false, description: 'Add supprt for using C++ strings')
+option('gamepad', type : 'boolean', value : false, description: 'Enable gamepad support in SDL3 demo executables')
 

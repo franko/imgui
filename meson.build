@@ -379,12 +379,14 @@ if get_option('sdl2')
     endif
 endif
 if get_option('sdl3')
+    sdl3_demo_cpp_args = get_option('gamepad') ? ['-DIMGUI_DEMO_GAMEPAD'] : []
     if get_option('opengl3')
         executable('imgui-demo-sdl3-opengl3',
             ['examples/example_sdl3_opengl3/main.cpp', imconfig_h],
             dependencies: imgui_deps + imgui_sdl3_deps + imgui_opengl3_deps,
             include_directories: imgui_include,
             link_with: [imgui_lib, imgui_demo_lib, imgui_sdl3_lib, imgui_opengl3_lib],
+            cpp_args: sdl3_demo_cpp_args,
             install: true,
         )
     endif
@@ -394,6 +396,7 @@ if get_option('sdl3')
             dependencies: imgui_deps + imgui_sdl3_deps,
             include_directories: imgui_include,
             link_with: [imgui_lib, imgui_demo_lib, imgui_sdl3_lib, imgui_dx11_lib],
+            cpp_args: sdl3_demo_cpp_args,
             install: true,
         )
     endif
@@ -402,6 +405,7 @@ if get_option('sdl3')
         dependencies: imgui_deps + imgui_sdl3_deps,
         include_directories: imgui_include,
         link_with: [imgui_lib, imgui_demo_lib, imgui_sdl3_lib, imgui_sdl3renderer_lib],
+        cpp_args: sdl3_demo_cpp_args,
         install: true,
     )
     executable('imgui-demo-sdl3-sdlgpu3',
@@ -409,6 +413,7 @@ if get_option('sdl3')
         dependencies: imgui_deps + imgui_sdl3_deps,
         include_directories: imgui_include,
         link_with: [imgui_lib, imgui_demo_lib, imgui_sdl3_lib, imgui_sdl3gpu_lib],
+        cpp_args: sdl3_demo_cpp_args,
         install: true,
     )
 endif
