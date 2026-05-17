@@ -1,6 +1,7 @@
 option('truetype', type : 'string',  value : 'freetype', description: 'Library using to render truetype font (freetype,stb)')
 
-option('sdl',   type : 'boolean', value : false,  description: 'Build the window/events support using SDL2')
+option('sdl2',   type : 'boolean', value : false,  description: 'Build the window/events support using SDL2')
+option('sdl3',   type : 'boolean', value : false,  description: 'Build the window/events and renderer/GPU support using SDL3')
 option('glfw',  type : 'boolean', value : false,  description: 'Build the window/events support using GLFW')
 option('win32', type : 'boolean', value : false,  description: 'Build the window/events support using Win32')
 option('osx',   type : 'boolean', value : false,  description: 'Build the window/events support using MacOS')

@@ -79,22 +79,68 @@ pkg.generate(imgui_demo_lib,
     url : 'http://github.com/ocornut/imgui',
 )
 
-if get_option('sdl')
-    # With imgui 1.89.6 we have also sdl3 and sdl2/3 renderer for the implementation.
-    # We may addo support for this variants but for the moments we only do sdl2.
-    imgui_sdl_deps = [ dependency('sdl2', method : 'config-tool') ]
-    imgui_sdl_lib = library('imguisdl', ['backends/imgui_impl_sdl2.cpp', imconfig_h],
-        dependencies : imgui_sdl_deps,
+if get_option('sdl2')
+    imgui_sdl2_deps = [ dependency('sdl2', method : 'config-tool') ]
+    imgui_sdl2_lib = library('imguisdl2', ['backends/imgui_impl_sdl2.cpp', imconfig_h],
+        dependencies : imgui_sdl2_deps,
         include_directories: imgui_include,
         link_with : imgui_lib,
         install : true,
     )
     install_headers('backends/imgui_impl_sdl2.h')
-    pkg.generate(imgui_sdl_lib,
-        filebase : 'imguisdl',
-        name : 'imguisdl',
-        libraries : [imgui_lib, imgui_sdl_lib],
+    pkg.generate(imgui_sdl2_lib,
+        filebase : 'imguisdl2',
+        name : 'imguisdl2',
+        libraries : [imgui_lib, imgui_sdl2_lib],
         description : 'Dear ImGui library SDL2 support',
+        url : 'http://github.com/ocornut/imgui',
+    )
+endif
+
+if get_option('sdl3')
+    imgui_sdl3_deps = [ dependency('sdl3') ]
+    imgui_sdl3_lib = library('imguisdl3', ['backends/imgui_impl_sdl3.cpp', imconfig_h],
+        dependencies : imgui_sdl3_deps,
+        include_directories: imgui_include,
+        link_with : imgui_lib,
+        install : true,
+    )
+    install_headers('backends/imgui_impl_sdl3.h')
+    pkg.generate(imgui_sdl3_lib,
+        filebase : 'imguisdl3',
+        name : 'imguisdl3',
+        libraries : [imgui_lib, imgui_sdl3_lib],
+        description : 'Dear ImGui library SDL3 support',
+        url : 'http://github.com/ocornut/imgui',
+    )
+
+    imgui_sdl3renderer_lib = library('imguisdl3renderer', ['backends/imgui_impl_sdlrenderer3.cpp', imconfig_h],
+        dependencies : imgui_sdl3_deps,
+        include_directories: imgui_include,
+        link_with : [imgui_lib, imgui_sdl3_lib],
+        install : true,
+    )
+    install_headers('backends/imgui_impl_sdlrenderer3.h')
+    pkg.generate(imgui_sdl3renderer_lib,
+        filebase : 'imguisdl3renderer',
+        name : 'imguisdl3renderer',
+        libraries : [imgui_lib, imgui_sdl3_lib, imgui_sdl3renderer_lib],
+        description : 'Dear ImGui library SDL3 Renderer support',
+        url : 'http://github.com/ocornut/imgui',
+    )
+
+    imgui_sdl3gpu_lib = library('imguisdl3gpu', ['backends/imgui_impl_sdlgpu3.cpp', imconfig_h],
+        dependencies : imgui_sdl3_deps,
+        include_directories: imgui_include,
+        link_with : [imgui_lib, imgui_sdl3_lib],
+        install : true,
+    )
+    install_headers('backends/imgui_impl_sdlgpu3.h', 'backends/imgui_impl_sdlgpu3_shaders.h')
+    pkg.generate(imgui_sdl3gpu_lib,
+        filebase : 'imguisdl3gpu',
+        name : 'imguisdl3gpu',
+        libraries : [imgui_lib, imgui_sdl3_lib, imgui_sdl3gpu_lib],
+        description : 'Dear ImGui library SDL3 GPU support',
         url : 'http://github.com/ocornut/imgui',
     )
 endif
@@ -312,25 +358,59 @@ if get_option('osx')
     endif
 endif
 
-if get_option('sdl')
+if get_option('sdl2')
     if get_option('opengl3')
         executable('imgui-demo-sdl2-opengl3',
             ['examples/example_sdl2_opengl3/main.cpp', imconfig_h],
-            dependencies: imgui_deps + imgui_sdl_deps + imgui_opengl3_deps,
+            dependencies: imgui_deps + imgui_sdl2_deps + imgui_opengl3_deps,
             include_directories: imgui_include,
-            link_with: [imgui_lib, imgui_demo_lib, imgui_sdl_lib, imgui_opengl3_lib],
+            link_with: [imgui_lib, imgui_demo_lib, imgui_sdl2_lib, imgui_opengl3_lib],
             install: true,
         )
     endif
     if get_option('d3d11')
         executable('imgui-demo-sdl2-dx11',
             ['examples/example_sdl2_directx11/main.cpp', imconfig_h],
-            dependencies: imgui_deps + imgui_sdl_deps,
+            dependencies: imgui_deps + imgui_sdl2_deps,
             include_directories: imgui_include,
-            link_with: [imgui_lib, imgui_demo_lib, imgui_sdl_lib, imgui_dx11_lib],
+            link_with: [imgui_lib, imgui_demo_lib, imgui_sdl2_lib, imgui_dx11_lib],
             install: true,
         )
     endif
+endif
+if get_option('sdl3')
+    if get_option('opengl3')
+        executable('imgui-demo-sdl3-opengl3',
+            ['examples/example_sdl3_opengl3/main.cpp', imconfig_h],
+            dependencies: imgui_deps + imgui_sdl3_deps + imgui_opengl3_deps,
+            include_directories: imgui_include,
+            link_with: [imgui_lib, imgui_demo_lib, imgui_sdl3_lib, imgui_opengl3_lib],
+            install: true,
+        )
+    endif
+    if get_option('d3d11')
+        executable('imgui-demo-sdl3-dx11',
+            ['examples/example_sdl3_directx11/main.cpp', imconfig_h],
+            dependencies: imgui_deps + imgui_sdl3_deps,
+            include_directories: imgui_include,
+            link_with: [imgui_lib, imgui_demo_lib, imgui_sdl3_lib, imgui_dx11_lib],
+            install: true,
+        )
+    endif
+    executable('imgui-demo-sdl3-sdlrenderer3',
+        ['examples/example_sdl3_sdlrenderer3/main.cpp', imconfig_h],
+        dependencies: imgui_deps + imgui_sdl3_deps,
+        include_directories: imgui_include,
+        link_with: [imgui_lib, imgui_demo_lib, imgui_sdl3_lib, imgui_sdl3renderer_lib],
+        install: true,
+    )
+    executable('imgui-demo-sdl3-sdlgpu3',
+        ['examples/example_sdl3_sdlgpu3/main.cpp', imconfig_h],
+        dependencies: imgui_deps + imgui_sdl3_deps,
+        include_directories: imgui_include,
+        link_with: [imgui_lib, imgui_demo_lib, imgui_sdl3_lib, imgui_sdl3gpu_lib],
+        install: true,
+    )
 endif
 if get_option('glfw')
     if get_option('opengl3')
