@@ -139,6 +139,7 @@ if get_option('osx')
     imgui_osx_lib = library('imguiosx', ['backends/imgui_impl_osx.mm', imconfig_h],
         include_directories: imgui_include,
         link_with : imgui_lib,
+        link_args : ['-framework', 'AppKit', '-framework', 'GameController', '-framework', 'Foundation'],
         install : true,
     )
     install_headers('backends/imgui_impl_osx.h')
@@ -282,6 +283,7 @@ if get_option('metal')
     imgui_metal_lib = library('imguimetal', ['backends/imgui_impl_metal.mm', imconfig_h],
         include_directories: imgui_include,
         link_with : imgui_lib,
+        link_args : ['-framework', 'Metal', '-framework', 'Foundation'],
         install : true,
     )
     install_headers('backends/imgui_impl_metal.h')
