@@ -182,10 +182,14 @@ if get_option('win32')
 endif
 
 if get_option('osx')
+    imgui_osx_deps = declare_dependency(
+        link_args: ['-framework', 'AppKit', '-framework', 'GameController',
+                    '-framework', 'Foundation']
+    )
     imgui_osx_lib = library('imguiosx', ['backends/imgui_impl_osx.mm', imconfig_h],
+        dependencies: imgui_osx_deps,
         include_directories: imgui_include,
         link_with : imgui_lib,
-        link_args : ['-framework', 'AppKit', '-framework', 'GameController', '-framework', 'Foundation'],
         install : true,
     )
     install_headers('backends/imgui_impl_osx.h')
@@ -326,10 +330,13 @@ if get_option('d3d12')
 endif
 
 if get_option('metal')
+    imgui_metal_deps = declare_dependency(
+        link_args: ['-framework', 'Metal', '-framework', 'Foundation']
+    )
     imgui_metal_lib = library('imguimetal', ['backends/imgui_impl_metal.mm', imconfig_h],
+        dependencies: imgui_metal_deps,
         include_directories: imgui_include,
         link_with : imgui_lib,
-        link_args : ['-framework', 'Metal', '-framework', 'Foundation'],
         install : true,
     )
     install_headers('backends/imgui_impl_metal.h')
